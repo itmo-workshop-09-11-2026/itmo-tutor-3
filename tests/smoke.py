@@ -18,7 +18,7 @@ with tempfile.TemporaryDirectory(prefix='shop-test-') as tmp:
     (work/'site/old.txt').write_text('old')
     call(CMD+['--pack'],work)
     with zipfile.ZipFile(work/'shop.zip') as z:
-        assert {'index.html','styles.css','app.js','assets/shop.svg','products.json','old.txt'}<=set(z.namelist())
+        assert {'index.html','styles.css','js/app.js','js/products.js','js/cart.js','assets/shop.svg','products.json','old.txt'}<=set(z.namelist())
         assert all(not n.startswith(('site/','../','/')) for n in z.namelist())
         assert all(not n.endswith(('.go','.java','.cs','.csproj')) for n in z.namelist())
     (work/'site/old.txt').unlink()
@@ -54,7 +54,7 @@ with tempfile.TemporaryDirectory(prefix='shop-test-') as tmp:
                 except (OSError,urllib.error.URLError): time.sleep(.25)
             else:
                 log.seek(0); raise AssertionError('Server did not start: '+log.read())
-            for path,mime in [('/', 'text/html'),('/styles.css','text/css'),('/app.js','javascript'),('/assets/shop.svg','image/svg+xml'),('/products.json','application/json')]:
+            for path,mime in [('/', 'text/html'),('/styles.css','text/css'),('/js/app.js','javascript'),('/js/products.js','javascript'),('/js/cart.js','javascript'),('/assets/shop.svg','image/svg+xml'),('/products.json','application/json')]:
                 with urllib.request.urlopen(base+path) as r:
                     assert mime in r.headers['Content-Type'], (path,r.headers['Content-Type'])
                     assert r.read(), path
